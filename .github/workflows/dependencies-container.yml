@@ -16,33 +16,15 @@ jobs:
     name: Test changed-files
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Get changed files using a comma separator
-        id: changed-files-comma
+      - name: Get changed files
+        id: changed-files
         uses: tj-actions/changed-files@v25
 
-      - name: List all added files
+      - name: List all changed files
         run: |
-          for file in ${{ steps.changed-files.outputs.added_files }}; do
-            echo "$file was added"
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
           done
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image when dependencies.R changes
-        if: contains(steps.changed-files.outputs.modified_files, 'Scripts/dependencies.R')
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
