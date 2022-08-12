@@ -40,6 +40,10 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%Y-%m-%d-%H-%M')"
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+
       - name: Run step when a file changes
         if: contains(steps.changed-files.outputs.modified_files, 'Scripts/dependencies.R')
         run: |
@@ -52,3 +56,4 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.date.outputs.date }}
+          labels: ${{ steps.meta.outputs.labels }}
