@@ -28,3 +28,9 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "$file was changed"
           done
+
+      - name: Run step when a file changes
+        if: contains(steps.changed-files.outputs.modified_files, 'Scripts/dependencies.R')
+        run: |
+          echo "Your Scripts/dependencies.R file has been modified."
+
