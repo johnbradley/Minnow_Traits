@@ -43,6 +43,8 @@ jobs:
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Run step when a file changes
         if: contains(steps.changed-files.outputs.modified_files, 'Scripts/dependencies.R')
